@@ -242,7 +242,6 @@ def main():
     # Output the grid (for example, write to a file or print)
     print(grid)
 
-
 if __name__ == "__main__":
     main()
 
