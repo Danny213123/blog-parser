@@ -148,9 +148,14 @@ def generate_blog_grid(blogs, output_file='latest_blogs.md', max_blogs=15):
         # look at myst description 
         if hasattr(blog, 'myst'):
 
-            print(blog.myst.get('description lang=en'))
+            print(blog.myst.get('html_meta').get('description lang=en'))
+            description = blog.myst.get('html_meta').get('description lang=en') if blog.myst.get('html_meta').get('description lang=en') else 'No Description'
 
-            description = blog.myst.get('description') if 'description lang=en' in blog.myst else 'No description'
+            if len(description) > 150:
+                description = description[:150] + '...'
+            else:
+                # add invisible characters to ensure the card is the same size
+                description = description + '...' + ' ' * (150 - len(description))
 
         # Get authors from the blog (assuming it's a comma-separated string)
         authors_list = getattr(blog, 'author', '').split(',')
@@ -161,6 +166,10 @@ def generate_blog_grid(blogs, output_file='latest_blogs.md', max_blogs=15):
 
         # Generate an image or use default
         image = blog.thumbnail if hasattr(blog, 'thumbnail') else './images/generic.jpg'
+
+        # Check to see if image is in images directory
+        if not os.path.exists(image):
+            image = './images/generic.jpg'
 
         # Create authors HTML by checking if an author page exists
         author_links = []
@@ -190,21 +199,24 @@ def generate_blog_grid(blogs, output_file='latest_blogs.md', max_blogs=15):
         # Join author links with commas
         authors_html = ', '.join(author_links) if author_links else 'Unknown Author'
 
+        # swap href \ to / for windows
+        href = href.replace('\\', '/')
+
         # Create grid item card with authors
         grid_item = f"""
 :::{{grid-item-card}}
 :padding: 1
+:link: {href[:href.rfind('.html')]}
+:link-type: doc
 :img-top: {image}
 :class-img-top: small-sd-card-img-top
 :class-body: small-sd-card
-
++++
 <a href="{href}" class="small-card-header-link">
     <h2 class="card-header">{title}</h2>
 </a>
-<div class="date">{date} by {authors_html}</div>
-
 <p class="paragraph">{description}</p>
-<a href="{href}" class="read-more-btn-small">Read More <span class="arrows-small">>></span></a>
+<div class="date">{date} by {authors_html}</div>
 :::
 """
         grid_items.append(grid_item)
