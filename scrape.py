@@ -64,10 +64,15 @@ def find_readme_files(root_dir):
 
     readme_files = []
     for dirpath, dirnames, filenames in os.walk(root_dir):
+
         for filename in filenames:
+
             if filename.lower() == 'readme.md':  # Case-insensitive matching
+
                 full_path = os.path.join(dirpath, filename)
+
                 readme_files.append(full_path)
+
     return readme_files
 
 
@@ -136,20 +141,26 @@ def generate_blog_grid(blogs, output_file='latest_blogs.md', max_blogs=15):
 
     for index, blog in enumerate(blogs[:max_blogs]):
 
-        title = blog.title if hasattr(blog, 'title') else 'No Title'
+        title = blog.blog_title if hasattr(blog, 'blog_title') else 'No Title'
 
         date = blog.date.strftime('%B %d, %Y') if blog.date else 'No Date'
         
-        description = blog.description if hasattr(blog, 'description') else 'No Description'
+        # look at myst description 
+        if hasattr(blog, 'myst'):
+
+            print(blog.myst.get('description lang=en'))
+
+            description = blog.myst.get('description') if 'description lang=en' in blog.myst else 'No description'
 
         # Get authors from the blog (assuming it's a comma-separated string)
         authors_list = getattr(blog, 'author', '').split(',')
 
         # Create href by replacing the .md extension with .html
         href = blog.file_path.replace('.md', '.html')
+        href = href.replace('blogs', '.')
 
         # Generate an image or use default
-        image = getattr(blog, 'image', './images/default.jpg')  # Default image path
+        image = blog.thumbnail if hasattr(blog, 'thumbnail') else './images/generic.jpg'
 
         # Create authors HTML by checking if an author page exists
         author_links = []
@@ -165,6 +176,7 @@ def generate_blog_grid(blogs, output_file='latest_blogs.md', max_blogs=15):
             if os.path.exists(author_file):
                 # If the author file exists, create a clickable link to the author's page
                 author_page = author_file.replace('.md', '.html')  # Convert .md to .html for the link
+                author_page = author_page.replace('blogs', '.')
 
                 author_links.append(f'<a href="{author_page}">{author.strip()}</a>')
 
@@ -194,7 +206,7 @@ def generate_blog_grid(blogs, output_file='latest_blogs.md', max_blogs=15):
 <p class="paragraph">{description}</p>
 <a href="{href}" class="read-more-btn-small">Read More <span class="arrows-small">>></span></a>
 :::
-        """
+"""
         grid_items.append(grid_item)
 
     # Join all grid items into one string
@@ -244,4 +256,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
