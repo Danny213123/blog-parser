@@ -406,7 +406,7 @@ Generated {datetime}
 """
 
     grid_items = []
-    author_pages_dir = 'blogs/authors'  # Directory where author markdown files are stored
+    author_pages_dir = '../blogs/authors'  # Directory where author markdown files are stored
 
     for index, blog in enumerate(blogs[:max_blogs]):
 
@@ -526,10 +526,10 @@ Generated {datetime}
     # dangerous
     
     # copy index.md as archive
-    shutil.copyfile('blogs/index.md', 'archive/index.md')
+    shutil.copyfile('../blogs/index.md', '../archive/index.md')
 
     # write new index.md
-    with open('blogs/index.md', 'w', encoding='utf-8') as f:
+    with open('../blogs/index.md', 'w', encoding='utf-8') as f:
 
         f.write(index_template)
 
@@ -537,9 +537,9 @@ Generated {datetime}
 
 def main():
 
-    root_directory = 'blogs'  # Specify the root directory
+    root_directory = '../blogs'  # Specify the root directory
 
-    if not os.path.isdir(root_directory):
+    if not os.path.exists(root_directory):
 
         print(f"The directory '{root_directory}' does not exist.")
 
@@ -556,7 +556,7 @@ def main():
         return
 
     print(f"Found {len(readme_files)} 'readme.md' file(s).")
-    
+
     blogs = create_blog_objects(readme_files)
 
     # Sort blogs by date
