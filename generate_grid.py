@@ -406,7 +406,7 @@ Generated {datetime}
 """
 
     grid_items = []
-    author_pages_dir = '../blogs/authors'  # Directory where author markdown files are stored
+    author_pages_dir = './blogs/authors'  # Directory where author markdown files are stored
 
     for index, blog in enumerate(blogs[:max_blogs]):
 
@@ -524,12 +524,9 @@ Generated {datetime}
     index_template = index_template.replace('{datetime}', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     # dangerous
-    
-    # copy index.md as archive
-    shutil.copyfile('../blogs/index.md', '../archive/index.md')
 
     # write new index.md
-    with open('../blogs/index.md', 'w', encoding='utf-8') as f:
+    with open('blogs/index.md', 'w', encoding='utf-8') as f:
 
         f.write(index_template)
 
@@ -537,7 +534,7 @@ Generated {datetime}
 
 def main():
 
-    root_directory = '../blogs'  # Specify the root directory
+    root_directory = 'blogs'  # Specify the root directory
 
     if not os.path.exists(root_directory):
 
@@ -569,10 +566,7 @@ def main():
             print(blog.author)
 
     # Generate the grid for the top 15 latest blogs
-    grid = generate_blog_grid(sorted_blogs, max_blogs=15)
-
-    # Output the grid (for example, write to a file or print)
-    print(grid)
+    generate_blog_grid(sorted_blogs, max_blogs=15)
 
 if __name__ == "__main__":
     main()
