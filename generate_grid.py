@@ -444,10 +444,6 @@ Generated {datetime}
         # check if image is in images directory (blogs/images)
         temp_image = image.replace('//', '/').replace('./', 'blogs/')
 
-        # print current working directory
-        print(os.getcwd())
-
-        # images are in the blogs/images directory
         if not os.path.exists(temp_image):
 
             print(f"Image {image} does not exist.")
@@ -528,12 +524,9 @@ Generated {datetime}
     index_template = index_template.replace('{datetime}', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     # dangerous
-    
-    # copy index.md as archive
-    # shutil.copyfile('blogs/index.md', 'archive/index.md')
 
     # write new index.md
-    with open('../blogs/index.md', 'w', encoding='utf-8') as f:
+    with open('blogs/index.md', 'w', encoding='utf-8') as f:
 
         f.write(index_template)
 
@@ -541,7 +534,12 @@ Generated {datetime}
 
 def main():
 
-    root_directory = '../blogs'  # Specify the root directory
+    root_directory = 'blogs'  # Specify the root directory
+
+    print(os.getcwd())
+
+    # change cwd to parent directory
+    os.chdir('..')
 
     if not os.path.exists(root_directory):
 
@@ -574,6 +572,9 @@ def main():
 
     # Generate the grid for the top 15 latest blogs
     generate_blog_grid(sorted_blogs, max_blogs=15)
+
+    # change back working directory
+    os.chdir('blogs')
 
 if __name__ == "__main__":
     main()
