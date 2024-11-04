@@ -1,5 +1,6 @@
 # Index.md Generator
 # Updated 2024 October 21
+# Version 1.1
 
 import os
 import re
@@ -144,7 +145,7 @@ def sort_blogs_by_date(blogs):
 
     return sorted(blogs_with_date, key=lambda blog: blog.date, reverse=True)
 
-def generate_blog_grid(blogs, output_file='latest_blogs.md', max_blogs=15):
+def generate_blog_grid(blogs, output_file='latest_blogs.md', max_blogs=12):
 
     index_template = """
 ---
@@ -405,6 +406,9 @@ Generated {datetime}
 
 """
 
+    # remove the first new line
+    index_template = index_template[1:]
+
     grid_items = []
     author_pages_dir = './blogs/authors'  # Directory where author markdown files are stored
 
@@ -433,22 +437,47 @@ Generated {datetime}
         href = blog.file_path.replace('.md', '.html')
         href = href.replace('blogs', '.')
 
+        # swap href \ to / for windows
+        href = href.replace('\\', '/')
+
         # Generate an image or use default
         image = blog.thumbnail if hasattr(blog, 'thumbnail') else './images/generic.jpg'
 
         # check if image path is in the correct format
         if not image.startswith('./images/'):
 
-            image = './images/' + image
+          image = './images/' + image
 
+        # remove README.html
+        image_href = './blogs'+((href[1:].replace('/README.html', image[1:])))
+        image_href = image_href.replace('\\', '/')
+        
         # check if image is in images directory (blogs/images)
         temp_image = image.replace('//', '/').replace('./', 'blogs/')
 
-        if not os.path.exists(temp_image):
+        print ("\n-------------------------------------------------------------------\n")
+        print(f"Link: {href}")
 
-            print(f"Image {image} does not exist.")
+        if not os.path.exists(temp_image): 
 
+          print(f"Image {image} does not exist.")
+
+          image = './images/generic.jpg'
+
+          if os.path.exists(image_href):
+              
+            print(f"Image {image_href} exists.")
+            image = image_href.replace('./blogs', '.')
+
+          else:
+                
+            print(f"Image {image_href} does not exist.")
             image = './images/generic.jpg'
+
+        # check if images are in the relative blog directory
+        elif os.path.exists(href.replace('.html', '.md').replace('blogs', '.')):
+            
+            print (href.replace('.html', '.md').replace('blogs', '.'))
 
         else:
 
@@ -486,9 +515,6 @@ Generated {datetime}
         # Join author links with commas
         authors_html = ', '.join(author_links) if author_links else 'Unknown Author'
 
-        # swap href \ to / for windows
-        href = href.replace('\\', '/')
-
         # Create grid item card with authors
         grid_item = f"""
 :::{{grid-item-card}}
@@ -524,7 +550,7 @@ Generated {datetime}
     index_template = index_template.replace('{datetime}', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     # dangerous
-
+    
     # write new index.md
     with open('blogs/index.md', 'w', encoding='utf-8') as f:
 
@@ -571,7 +597,7 @@ def main():
             print(blog.author)
 
     # Generate the grid for the top 15 latest blogs
-    generate_blog_grid(sorted_blogs, max_blogs=15)
+    generate_blog_grid(sorted_blogs, max_blogs=12)
 
     # change back working directory
     os.chdir('blogs')
