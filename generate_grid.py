@@ -349,7 +349,7 @@ Generated {datetime}
 ::::
 
 <div class="container">
-  <h2>Applications and Models</h2>
+  <h2>Applications & models</h2>
   <a href="blog/category/applications-models.html">
     <button id="buttonWrapper">
       See All >>
@@ -363,8 +363,8 @@ Generated {datetime}
 ::::
 
 <div class="container">
-  <h2>Applications and Models</h2>
-  <a href="blog/category/applications-models.html">
+  <h2>Software tools & optimizations</h2>
+  <a href="blog/category/software-tools-optimizations.html">
     <button id="buttonWrapper">
       See All >>
     </button>
