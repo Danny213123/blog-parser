@@ -500,9 +500,7 @@ Generated {datetime}
 
         if authors_html:
              
-          authors_html = f"<br>By {authors_html}"
-
-
+          authors_html = f"by {authors_html}"
 
         # Create grid item card with authors
         grid_item = f"""
@@ -535,7 +533,7 @@ Generated {datetime}
               
           software_grid_items.append(grid_item)
 
-        elif blog.category == 'Ecosystems and Partners' and len(holder) < max_category:
+        elif blog.category == 'Ecosystems and Partners' and len(eco_grid_items) < max_category:
           
           eco_grid_items.append(grid_item)
     
