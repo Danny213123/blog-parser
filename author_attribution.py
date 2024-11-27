@@ -82,8 +82,15 @@ def author_attribution(readme_file: str):
 
         if authors_html:
              
-          authors_string = f"{date}, by {authors_html}"
-          authors_html = f'<span style="font-size:0.7em;">{authors_string}</span>'
+            authors_string = f"{date}, by {authors_html}"
+
+            # make it work with markdown and html
+            # authors_html = f'<span style="font-size:0.7em;">{authors_string}</span>'
+
+            print(f"Authors: {authors_string}")
+
+            authors_html = f'<div class="date">{authors_string}</div>'
+
 
         # find the line with the title
 
@@ -113,9 +120,22 @@ def author_attribution(readme_file: str):
             #
             # content
 
-            lines.insert(line_number + 1, f"\n{authors_html}\n")
+            lines.insert(line_number + 1, """
+<style>
+.date {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 22.5px;
+    text-transform: none;
+    margin-bottom: 10px;
+  }
+</style>\n""")
+
+            lines.insert(line_number + 2, f"\n{authors_html}\n")
 
             with open(readme_file, 'w', encoding='utf-8') as file:
+
+                # add date class style
 
                 file.writelines(lines)
 
