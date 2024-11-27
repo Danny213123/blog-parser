@@ -82,7 +82,8 @@ def author_attribution(readme_file: str):
 
         if authors_html:
              
-          authors_html = f"{date}, by {authors_html}"
+          authors_string = f"{date}, by {authors_html}"
+          authors_html = f'<span style="font-size:0.7em;">{authors_string}</span>'
 
         # find the line with the title
 
