@@ -1,6 +1,6 @@
 # Index.md Generator
 # Updated 2024 November 13
-# Version 1.2
+# Version 1.3
 
 import os
 import re
@@ -71,19 +71,19 @@ class Blog:
 
 def find_readme_files(root_dir):
 
-    readme_files = []
+  readme_files = []
 
-    for dirpath, dirnames, filenames in os.walk(root_dir):
+  for dirpath, dirnames, filenames in os.walk(root_dir):
 
-        for filename in filenames:
+      for filename in filenames:
 
-            if filename.lower() == 'readme.md':  # Case-insensitive matching
+          if filename.lower() == 'readme.md':  # Case-insensitive matching
 
-                full_path = os.path.join(dirpath, filename)
+              full_path = os.path.join(dirpath, filename)
 
-                readme_files.append(full_path)
+              readme_files.append(full_path)
 
-    return readme_files
+  return readme_files
 
 
 def extract_metadata(file_path):
@@ -144,6 +144,40 @@ def sort_blogs_by_date(blogs):
     blogs_with_date = [blog for blog in blogs if blog.date is not None]
 
     return sorted(blogs_with_date, key=lambda blog: blog.date, reverse=True)
+
+def grab_authors(authors_list):
+
+  author_pages_dir = './blogs/authors'  # Directory where author markdown files are stored
+
+  author_links = []
+
+  for author in authors_list:
+
+      # Clean author name and format it correctly for the file system
+      author_name = author.strip().replace(' ', '-').lower()
+
+      # Path to the author's markdown file in the 'authors' directory
+      author_file = os.path.join(author_pages_dir, f"{author_name}.md")
+
+      print(f"Checking for author file: {author_file}")  # Debug print
+
+      if os.path.exists(author_file):
+
+          # If the author file exists, create a clickable link to the author's page
+          author_page = author_file.replace('.md', '.html')  # Convert .md to .html for the link
+
+          author_page = author_page.replace('blogs', '.')
+
+          author_links.append(f'<a href="{author_page}">{author.strip()}</a>')
+
+      else:
+
+          # If no author page exists, display the author's name as plain text
+          print(f"Author file {author_file} does not exist.")
+
+          author_links.append(author.strip())
+
+  return ', '.join(author_links) if author_links else ''
 
 def generate_blog_grid(blogs, output_file='latest_blogs.md', max_blogs=9, max_category=3):
 
@@ -393,7 +427,6 @@ Generated {datetime}
     eco_grid_items = []
 
     holder = []
-    author_pages_dir = './blogs/authors'  # Directory where author markdown files are stored
 
     for index, blog in enumerate(blogs):
 
@@ -438,6 +471,8 @@ Generated {datetime}
         # check if image is in images directory (blogs/images)
         temp_image = image.replace('//', '/').replace('./', 'blogs/')
 
+        print(f"Date: {date}")
+
         print ("\n-------------------------------------------------------------------\n")
         print(f"Link: {href}")
 
@@ -466,37 +501,10 @@ Generated {datetime}
 
             print(f"Image {image} exists.")
 
-        # Create authors HTML by checking if an author page exists
-        author_links = []
-
-        for author in authors_list:
-
-            # Clean author name and format it correctly for the file system
-            author_name = author.strip().replace(' ', '-').lower()
-
-            # Path to the author's markdown file in the 'authors' directory
-            author_file = os.path.join(author_pages_dir, f"{author_name}.md")
-
-            print(f"Checking for author file: {author_file}")  # Debug print
-
-            if os.path.exists(author_file):
-
-                # If the author file exists, create a clickable link to the author's page
-                author_page = author_file.replace('.md', '.html')  # Convert .md to .html for the link
-
-                author_page = author_page.replace('blogs', '.')
-
-                author_links.append(f'<a href="{author_page}">{author.strip()}</a>')
-
-            else:
-
-                # If no author page exists, display the author's name as plain text
-                print(f"Author file {author_file} does not exist.")
-
-                author_links.append(author.strip())
-
         # Join author links with commas
-        authors_html = ', '.join(author_links) if author_links else ''
+        if authors_list:
+
+          authors_html = grab_authors(authors_list)
 
         if authors_html:
              
@@ -506,8 +514,6 @@ Generated {datetime}
         grid_item = f"""
 :::{{grid-item-card}}
 :padding: 1
-:link: {href[:href.rfind('.html')]}
-:link-type: doc
 :img-top: {image}
 :class-img-top: small-sd-card-img-top
 :class-body: small-sd-card
@@ -571,6 +577,100 @@ Generated {datetime}
 
     return index_template
 
+def author_attribution(blogs, minimum_date="September 1, 2024"):
+
+  blogs_to_process = []
+
+  for blog in blogs:
+
+    if blog.date < datetime.strptime(minimum_date, "%B %d, %Y"):
+
+      print(f"Skipping {blog.file_path}: Date is before {minimum_date}.")
+
+      continue
+
+    else:
+       
+      blogs_to_process.append(blog)
+
+  print(f"Processing {len(blogs_to_process)} blogs...")
+
+  for blog in blogs_to_process:
+
+    authors_list = getattr(blog, 'author', '').split(',')
+    date = blog.date.strftime('%B %d, %Y') if blog.date else 'No Date'
+
+    if authors_list:
+
+        authors_html = grab_authors(authors_list)
+
+        if authors_html:
+              
+            authors_string = f"{date}, by {authors_html}"
+
+            print(authors_html)
+
+            # make it work with markdown and html
+            # authors_html = f'<span style="font-size:0.7em;">{authors_string}</span>'
+
+            print(f"Authors: {authors_string}")
+
+            authors_html = f'<div class="date">{authors_string}</div>'
+
+        # grab blog link
+        readme_file = blog.file_path
+
+        with open(readme_file, 'r', encoding='utf-8') as file:
+
+            lines = file.readlines()
+
+        title, line_number = None, None
+
+        for i, line in enumerate(lines):
+
+            # only check for # , do not check if there are more than one # in the line
+            if line.startswith('#') and line.count('#') == 1:
+
+                title = line
+
+                line_number = i
+
+                break
+        
+        if title:
+
+            # insert the author attribution after the title
+            # title
+            # 
+            # author attribution
+            #
+            # content
+
+            lines.insert(line_number + 1, """
+  <style>
+  .date {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 22.5px;
+    text-transform: none;
+    margin-bottom: 10px;
+  }
+  </style>\n""")
+
+            lines.insert(line_number + 2, f"\n{authors_html}\n")
+
+            with open(readme_file, 'w', encoding='utf-8') as file:
+
+                # add date class style
+
+                file.writelines(lines)
+
+            print(f"Author attribution inserted in '{readme_file}'.")
+
+    else:
+            
+      print("No authors found in metadata.")
+
 def main():
 
     root_directory = 'blogs'  # Specify the root directory
@@ -611,6 +711,8 @@ def main():
 
     # Generate the grid for the top 15 latest blogs
     generate_blog_grid(sorted_blogs)
+
+    author_attribution(sorted_blogs)
 
     # change back working directory
     os.chdir('blogs')
