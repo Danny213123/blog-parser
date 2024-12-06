@@ -176,6 +176,8 @@ def grab_authors(authors_list):
                 ".md", ".html"
             )  # Convert .md to .html for the link
 
+            print(author_page)
+
             author_page = author_page.replace("blogs", ".")
 
             author_links.append(f'<a href="{author_page}">{author.strip()}</a>')
@@ -625,6 +627,10 @@ def author_attribution(blogs, minimum_date="September 1, 2024"):
             blogs_to_process.append(blog)
     print(f"Processing {len(blogs_to_process)} blogs...")
 
+    print(f"Current working directory as of author attribution: {os.getcwd()}")
+
+    print("\n-------------------------------------------------------------------\n")
+
     for blog in blogs_to_process:
 
         authors_list = getattr(blog, "author", "").split(",")
@@ -636,9 +642,15 @@ def author_attribution(blogs, minimum_date="September 1, 2024"):
 
             if authors_html:
 
+                authors_html = authors_html.replace("././", "../../").replace(
+                    ".md", ".html"
+                )
+
                 authors_string = f"{date}, by {authors_html}"
 
                 print(authors_html)
+
+                # replace with just blogs/{author_name}.html
 
                 # make it work with markdown and html
                 # authors_html = f'<span style="font-size:0.7em;">{authors_string}</span>'
@@ -646,6 +658,8 @@ def author_attribution(blogs, minimum_date="September 1, 2024"):
                 print(f"Authors: {authors_string}")
 
                 authors_html = f'<div class="date">{authors_string}</div>'
+            print(f"Current working directory as of write file: {os.getcwd()}")
+
             # grab blog link
 
             readme_file = blog.file_path
@@ -678,15 +692,15 @@ def author_attribution(blogs, minimum_date="September 1, 2024"):
                 lines.insert(
                     line_number + 1,
                     """
-  <style>
-  .date {
-    font-size: 13px;
-    font-weight: 300;
-    line-height: 22.5px;
-    text-transform: none;
-    margin-bottom: 10px;
-  }
-  </style>\n""",
+<style>
+.date {
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 22.5px;
+  text-transform: none;
+  margin-bottom: 10px;
+}
+</style>\n""",
                 )
 
                 lines.insert(line_number + 2, f"\n{authors_html}\n")
