@@ -1,0 +1,18 @@
+<div class="quickshare">
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ pathto('', 1) }}{{ pagename }}.html"
+       target="_blank" rel="noopener">
+       Share on LinkedIn
+    </a>
+    <a href="https://twitter.com/intent/tweet?url={{ pathto('', 1) }}{{ pagename }}.html&text=Check%20this%20out!"
+       target="_blank" rel="noopener">
+       Share on Twitter
+    </a>
+    <a href="https://www.reddit.com/submit?url={{ pathto('', 1) }}{{ pagename }}.html&title=Interesting%20Post"
+       target="_blank" rel="noopener">
+       Share on Reddit
+    </a>
+    <a href="https://www.youtube.com/share?url={{ pathto('', 1) }}{{ pagename }}.html"
+       target="_blank" rel="noopener">
+       Share on YouTube
+    </a>
+</div>
