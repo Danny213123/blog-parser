@@ -27,6 +27,11 @@ def quickshare(blog):
         font-size: 20px;
         color: white;
         transition: background-color 0.3s, color 0.3s;
+        background-size: 25px 25px;
+    }
+    .icon-bar.fixed a svg {
+        width: 25px;
+        height: 25px;
     }
     .icon-bar.fixed a:hover {
         background-color: #000;
@@ -40,10 +45,9 @@ def quickshare(blog):
         justify-content: flex-start;
         margin: 20px 0;
     }
-    
     .icon-bar.horizontal a {
-        width: 35px;
-        height: 35px;
+        width: 30px;
+        height: 30px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -51,13 +55,16 @@ def quickshare(blog):
         color: white;
         margin-left: 8px;
         transition: background-color 0.3s, color 0.3s;
+        background-size: 30px 30px;
         padding: 4px;
     }
-    
+    .icon-bar.horizontal a svg {
+        width: 20px;
+        height: 20px;
+    }
     .icon-bar.horizontal a:first-child {
         margin-left: 0;
     }
-    
     .icon-bar.horizontal a:hover {
         background-color: #000;
     }
@@ -69,13 +76,13 @@ def quickshare(blog):
 .twitter {
     background: #55ACEE;
 }
-.google {
+.reddit {
     background: #dd4b39;
 }
 .linkedin {
     background: #007bb5;
 }
-.reddit {
+.google {
     background: #bb0000;
 }
 </style>
